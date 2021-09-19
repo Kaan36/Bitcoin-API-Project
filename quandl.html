@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API include</title>
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    body h1,
+    h3 {
+      display: flex;
+      justify-content: center;
+    }
+
+    .canvas-container {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+
+  <script>
+    const API_KEY = 'zWmqowyEvzx8P8BQy7ky';
+    let ydata;
+    let xdata;
+    let jsonValue;
+    let stringValue;
+
+    async function loadCourse() {
+      let today = new Date();
+      today.setDate(new Date().getDate() - 1);
+      let startDate = today.toISOString().split('T')[0];
+      let endDate = today.toISOString().split('T')[0];
+      let url = `https://data.nasdaq.com/api/v3/datasets/BITFINEX/LUNAF0USTF0?start_date=${startDate}&end_date=${endDate}&api_key=${API_KEY}`;
+      let response = await fetch(url);
+      let responseAsJson = await response.json();
+      console.log('JSON-Array geladen:', responseAsJson);
+
+      let responseValue = responseAsJson['dataset']['data'][0]; //JSON-Array laden in variable responsevalue (integer)
+      responseValue.forEach(elt => {
+        jsonValue = +elt;           // forEach variante kürzer als for-schleife
+        ydata.push(jsonValue);
+      });
+
+      //------------------- Die for-schleife Version für ydata-------------------
+      //for (let i = 0; i < responseValue.length; i++) {
+      // jsonValue = +responseValue[i]; //Elemente von responseValue(ist ein Array/Integer)jeweils einzeln in jsonValue laden
+      //  ydata.push(jsonValue); // pushen der Elemente in das leere ydata Array 
+      //};
+
+
+      let responseText = responseAsJson['dataset']['column_names']; //JSON-Array laden in variable responseText (Json)
+      responseText.forEach(elt => {
+        stringValue = elt;          // forEach variante kürzer als for-schleife
+        xdata.push(stringValue);
+      });
+
+      //---------------- die for-schleifen Version für xdata ---------------------
+      //for (let i = 0; i < responseText.length; i++) {
+      // stringValue = responseText[i]; // Elemente von responseText(strings) jeweils einzeln in variable-stringValue laden
+      //  xdata.push(stringValue); // pushen der Elemente in das leere xdata Array
+      //}
+
+      showBitcoinToday(responseAsJson, startDate);
+    }
+
+    function showBitcoinToday(responseAsJson, startDate) {
+      let bitcoinToday = responseAsJson['dataset']['data'][0][1];
+      document.getElementById('bitcoinInUSDToday').innerHTML = bitcoinToday + ' ';
+      document.getElementById('bitcoinUSDDate').innerHTML = startDate;
+
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+
+  <script>
+
+    async function chartIt() {
+      ydata = [];
+      xdata = [];
+      await loadCourse(); // warten auf Funktion
+
+      let ydataCopy = [...ydata];
+      let xdataCopy = [...xdata];
+      let xdataValue = xdata.splice(1, xdata.length - 2); // die Elemente zwischen dem ersten und letzten Element werden ausgeschnitten und ins xdataValue geschoben
+      let ydataValue = ydata.splice(1, ydata.length - 2); // die Elemente zwischen dem ersten und letzten Element werden ausgeschnitten und ins ydataValue geschoben
+
+      const ctx = document.getElementById('myChart');
+      const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: xdataValue, //die daten für die x-Achse
+          datasets: [{ // der Bereich datasets bestimmt die configuration des charts
+            label: 'Bitcoin - USD',
+            data: ydataValue, // die daten für die y-Achse
+            backgroundColor: [ // Hintergrundfarben der Balken im datasets
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(0, 0, 0, 0.6)',
+              'rgba(4, 120, 20, 0.6)',
+              'rgba(120, 0, 0, 0.6)',
+            ],
+            borderColor: [ // Borderfarben der Balken im datasets
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 3 // setzt die Borderbreite im datasets 
+          }]
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: 'Bitfinex Charts'
+            }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              beginAtZero: true,
+              title: {
+                color: 'red',
+                display: true,
+                text: 'United States Dollar',
+              }
+            },
+            x: {
+              title: {
+                color: 'red',
+                display: true,
+                text: 'Datastructure',
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+
+</head>
+
+<body onload="chartIt()">
+
+  <h1>Was kostet ein Bitcoin aktuell?</h1>
+
+  <h3>Aktueller höchstwert des Bitcoins: <b id="bitcoinInUSDToday">60.000</b>USD am <b id="bitcoinUSDDate"></b></h3>
+
+  <div class="canvas-container" style="width: 60%; height: 50%;">
+    <canvas id="myChart"></canvas>
+  </div>
+
+</body>
+
+</html>
+
