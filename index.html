@@ -15,9 +15,15 @@
 </head>
 
 <body onload="init()">
+     <!-- -----------------------------loading-animate--------------------------------- -->
+     <div id="loadingContainer" class="loading-container d-none">
+      <div id="loading-animation" class="loading-animation">
+
+      </div>
+    </div>
 
   <!-- -----------------------------Start-Window--------------------------------- -->
-  <header id="start-section" class="start-section flex-center column w-100">
+  <!-- <header id="start-section" class="start-section flex-center column w-100">
     <span class="header-start-section">
       <h1>Bitcoin exchange rate</h1>
       <h2>Currency Converter, Current and Historic Exchange Rates</h2>
@@ -27,21 +33,25 @@
         <span>Currency Converter</span>
         <img src="./img/down_white.png" class="down-img">
       </a>
-      <a  href="#link2" class="header-link button flex-center column">
+      <a href="#link2" class="header-link button flex-center column">
         <span>Historic exchange rates</span>
         <img src="./img/down_white.png" class="down-img">
       </a>
     </div>
 
-  </header>
+  </header> -->
 
   <!-- -----------------------------Current-Exchange Rate --------------------------------- -->
 
- 
-  <div id="converterSection" class="converter-section flex-center column w-100">
-    <h3 id="link1">
+
+  <div id="converterSection-first" class="converter-section flex-center column w-100">
+    <!-- <h3 id="link1">
       Currency Converter: BTC/USD
-    </h3>
+    </h3> -->
+    <span class="header-start-section">
+      <h1>Bitcoin exchange rate</h1>
+      <h2>Currency Converter, Current and Historic Exchange Rates</h2>
+    </span>
     <div class="body-converter-section ">
       <div id="calculator" class="calculator">
         <div id="inputContainerLeft" class="inputs-container">
@@ -53,15 +63,15 @@
             <input type="number" id="input-left" name="input-left" class="inputfield-calculator">
             <span id="placeholder-left" class="placeholder">BTC</span>
           </div>
-          
+
         </div>
         <div class="exchange-icon">
           <button class="icon-button" onclick="changeCurrencyOrder()">
-            <img  src="./img/exchange.svg">
+            <img src="./img/exchange.svg">
           </button>
-          
+
         </div>
-       
+
         <div id="inputContainerRight" class="inputs-container">
           <label for="input-right" class="calc-input-label">
             Currency I want:
@@ -71,48 +81,52 @@
             <input type="number" id="input-right" name="input-right" class="inputfield-calculator">
             <span id="placeholder-right" class="placeholder">USD</span>
           </div>
-          
+
         </div>
       </div>
 
       <div class="description-converter-section">
         <span class="description-exchange">
-          <span>The current exchange rate BTC / USD of the</span>  <span id="date-exchange-rate"> </span><span> is: </span>
-         </span>
-   
-         <div class="table">
-           <table id="current-ex-table">
-             <thead>
-               <tr>
-                 <td></td>
-                 <td>mid</td>
-                 <td>bid</td>
-                 <td>ask</td>
-               </tr>
-             </thead>
-             
-             <tbody>
-               <tr>
-                 <td>1 BTC =</td>
-                 <td id="mid"></td>
-                 <td id="bid"></td>
-                 <td id="ask"></td>
-               </tr>
-             </tbody>
-           </table>
-         </div>
-         <div id="refreshed-at-1" class="refreshed-at">
+          <span>The current exchange rate BTC / USD of the</span> <span id="date-exchange-rate"> </span><span> is:
+          </span>
+        </span>
+
+        <div class="table">
+          <table id="current-ex-table">
+            <thead>
+              <tr>
+                <td></td>
+                <td>mid</td>
+                <td>bid</td>
+                <td>ask</td>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>1 BTC =</td>
+                <td id="mid"></td>
+                <td id="bid"></td>
+                <td id="ask"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="refreshed-at-1" class="refreshed-at">
           Data refreshed at <b>2021-10-20, 23:24:39.122Z</b></div>
       </div>
-   
-    
+
+
     </div>
   </div>
 
-  <div id="converterSection" class="converter-section flex-center column w-100">
-    <h3 id="link2">
-      Historic exchange rates:   BTC / UDS
-    </h3>
+  <div id="converterSection-second" class="converter-section flex-center column w-100">
+
+
+    <span class="header-start-section">
+      <h2>Historic exchange rates: BTC / UDS</h2> 
+
+    </span>
     <div class="body-converter-section ">
       <span class="header-historic-exchange">
         Choose your dates:
@@ -122,37 +136,57 @@
         <div class="input-dates">
           <span class="media-span">
             <label for="start-date">From</label>
-            <input type="date" name="start-date" min="2014-04-15" id="start-date" class="date-input" max="2021-10-20"></span>
+            <input type="date" name="start-date" min="2014-04-15" id="start-date" class="date-input"
+              max="2021-10-20"></span>
           <span class="media-span">
             <label for="end-date">to</label>
-            <input type="date" name="end-date" min="2014-04-15" id="end-date" class="date-input" max="2021-10-20"></span>
+            <input type="date" name="end-date" min="2014-04-15" id="end-date" class="date-input"
+              max="2021-10-20"></span>
         </div>
-        <button class="button-historic-rate" >Show exchange rates</button>
-         
-        <div class="historic-container">
+        <button id="buttonHistoricRate" class="button-historic-rate">Show exchange rates</button>
+
+        <div id="historic-container" class="historic-container d-none">
           <div class="header-historic-container">
             <div id="headerTable" class="header">
               Table
             </div>
-            <div id="headerChart" class="header">
+            <div id="headerChart" class="header headerStyle">
               Chart
             </div>
           </div>
           <div class="body-historic-container">
-            <div id="chart-section" class="canvas-container" style="width: 40%; height: 30%;">
+            <table id="table-section-header" class="table-section-header">
+              <thead>
+                <tr>
+                  <td>Date</td>
+                  <td>Mid</td>
+                  <td>Bid</td>
+                  <td>Ask</td>
+                </tr>
+              </thead>
+              <tbody id="table-section" class="table-section">
+
+              </tbody>
+            </table>
+            <div id="chart-section" class="canvas-container d-none">
+              <div id="chartIcon" class="full-screen-icon">
+                <img id="chartImage" src="./img/expand.svg">
+              </div>
               <canvas id="myChart"></canvas>
             </div>
           </div>
         </div>
 
-         <div id="refreshed-at-2" class="refreshed-at">
+        <div id="refreshed-at-2" class="refreshed-at">
           Data refreshed at <b>2021-10-20, 23:24:39.122Z</b></div>
       </div>
-   
-    
+
+
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
+
 </body>
 
 </html>
